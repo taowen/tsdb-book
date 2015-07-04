@@ -1,5 +1,5 @@
 # Summary
 
 * [Introduction](README.md)
-* [Time Series](time-series.md)
+* [Time Series](time-seriesmd.md)
 
