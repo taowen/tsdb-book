@@ -103,3 +103,45 @@ Leveraging these two features of the database engine, one can design the schema 
 }
 ```
 The idea is for every new data point, we update the document for the minute, instead of inserting a new document until the next minute. Same can be applied for one hour or one day. This way, when querying the data for the minute/hour/day, we just need to load one big document which is fast.
+
+# VividCortext
+
+VividCortext is a mysql performance monitoring company lead by mysql performance expert Baron Schwartz. You can bet he knows how to use mysql well. Not surprisingly, everyone just fits their hammers into any holes, VividCortex is using mysql to store time series data for their monitoring business.
+
+Baron Schewartz is kind enough to share their secret on how to push mysql to its limit as fast TSDB:
+
+* video: https://www.youtube.com/watch?v=ldyKJL_IVl8
+* slides: http://www.slideshare.net/vividcortex/vividcortex-building-a-timeseries-database-in-mysql
+* video (improved): https://www.youtube.com/watch?v=kTD1NuQXr4k&t=5h49m27s
+* slides (improved): http://www.slideshare.net/vividcortex/scaling-vividortexs-big-data-systems-on-mysql
+* another related slides: http://www.slideshare.net/vividcortex/catena-a-highperformance-time-series-data
+
+## Clustered Index
+
+Mysql Innodb storage engine has a feature called "clustered index". Normally the primary key of the table is the clustered index. The clustered index key or primary key is stored physcially on disk in sorted order. So that scan a sequence of primary key is very fast, just like hbase where rows are sorted by row key.
+
+![](mysql-clustered-index.png)
+
+Using clustered index the row store of mysql is also a b-tree index. For in-depth details on how clustered index works: https://www.simple-talk.com/sql/learn-sql-server/effective-clustered-indexes/
+
+![](vivicortex-primary-key.jpg)
+
+The primary key they use is "host.metric,timestamp", so that accessing a range of data points for a host/metric combination is optimized. The primary key design is exactly the same as opentsdb hbase row key design.
+
+## Sparse Metric
+
+A common problem when using metric name to represent every dimension is there will be a lot of metrics. Some user of graphite or opentsdb used Elasticsearch to build a database of metric name to allow search. VividCortex has similar problem. They collect metric or every database queries. So metric for a specific type of queries might not present in certain time ranges. If they need to answer this:
+
+![](vividcortext-query.jpg)
+
+```Rank all metrics matching pattern X from B to C, limit N```
+
+With the primary key design mentioned above, there is no easy way to figure out what are the metrics present in time range B to C? 
+
+![](vividcortext-metric-name.jpg)
+
+This problem is sovled by building a secondary index for metric name using external redis database. They ned to first query redis to see how many metrics present in [B, C] time range, then use the metric name to query mysql for the actual data. Just like other people using Elasticsearch for similar purpose, which is UGLY...
+
+## Compact
+
+Just like everybody else (opentsdb, mongodb), compact many data points into a single row is a great way to boost performance. VividCortex compact many data points in a single row, at cost of losing the ability to query using raw SQL. Developers at vividcortex have to internal service to query the TSDB, as the service code understands how the compaction works. Without compaction, there will be too many rows to be stored and queried efficiently in mysql.
