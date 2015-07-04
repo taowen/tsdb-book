@@ -1,4 +1,10 @@
-There are a lot of existing solutions. They all have some good internal design that makes them particularly good at some aspect, by pushing the underlying storage to its limit. Learning from the good old experience is a necessary to build a better one.
+There are a lot of existing solutions. They all have some good internal design that makes them particularly good at some aspect, by pushing the underlying storage to its limit. Learning from the good old experience is a necessary to build a better one. The following databases all share the same record data mode:
+
+```
+[metric_name],[timestamp],[value]
+```
+
+All of them can handle this kind of data very well, and can return the records within a time range very fast.
 
 # Opentsdb
 
@@ -145,3 +151,8 @@ This problem is sovled by building a secondary index for metric name using exter
 ## Compact
 
 Just like everybody else (opentsdb, mongodb), compact many data points into a single row is a great way to boost performance. VividCortex compact many data points in a single row, at cost of losing the ability to query using raw SQL. Developers at vividcortex have to internal service to query the TSDB, as the service code understands how the compaction works. Without compaction, there will be too many rows to be stored and queried efficiently in mysql.
+
+# Summary
+
+Traditional RDBMS and Fast K/V database can make great TSDB. If we can know all the query we will make, and with clever design, everything can fit into the metric name centric data model. But in case you are wondering how to query a large number of metrics in one time and select the top N or aggregate them up, you would better to review if you can choose a better metric name design.
+If you can not know the querys ahead of time, or there is no good way to normalize or denormalize so that metric name centric model can fit, then let's explore other options.
