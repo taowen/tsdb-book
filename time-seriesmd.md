@@ -34,7 +34,7 @@ Store and query large volume of low value data cheaply presents very unique tech
 
 Functional wise, TSDB is not that much different from a traditional relational data management system (RDBMS). We can build a TSDB upon traditional RDBMS like mysql or postgresql. For mysql database, within 1 million rows, it can be queries within second, and hold the volume of data wihout a problem. What mordern TDSB can provide us is nearly the same capability (except sub query or join) provided by mysql, but with a 100x ~ 1000x size of data per day (100 million to 1 billion rows), and maintain linear scalability for infinite number of days of data given enough machines provided. 
 
-![](1435641327_80_w1357_h832.png)
+![](tsdb-functionality.png)
 
 The functionality of a TSDB can be listed as 4 types:
 
