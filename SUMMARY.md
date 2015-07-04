@@ -3,5 +3,5 @@
 * [Introduction](README.md)
 * [Time Series](time-seriesmd.md)
 * [Agility](agility.md)
-* Existing Solutions
+* [Existing Solutions](existing-solutions.md)
 
