@@ -1,3 +1,3 @@
-# First Chapter
+# Time Series
 
-GitBook allows you to organize your book into chapters, each chapter is stored in a separate file like this one.
+Before we dive in, it is better to clarify what is time series. What exactly is the data model.
