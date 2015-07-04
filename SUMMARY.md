@@ -2,5 +2,5 @@
 
 * [Introduction](README.md)
 * [Time Series](time-seriesmd.md)
-* Agility
+* [Agility](agility.md)
 
