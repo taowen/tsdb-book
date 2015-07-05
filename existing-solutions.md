@@ -110,7 +110,7 @@ Leveraging these two features of the database engine, one can design the schema 
 ```
 The idea is for every new data point, we update the document for the minute, instead of inserting a new document until the next minute. Same can be applied for one hour or one day. This way, when querying the data for the minute/hour/day, we just need to load one big document which is fast.
 
-# VividCortext
+# Mysql
 
 VividCortext is a mysql performance monitoring company lead by mysql performance expert Baron Schwartz. You can bet he knows how to use mysql well. Not surprisingly, everyone just fits their hammers into any holes, VividCortex is using mysql to store time series data for their monitoring business.
 
@@ -154,5 +154,5 @@ Just like everybody else (opentsdb, mongodb), compact many data points into a si
 
 # Summary
 
-Traditional RDBMS and Fast K/V database can make great TSDB. If we can know all the query we will make, and with clever design, everything can fit into the metric name centric data model. But in case you are wondering how to query a large number of metrics in one time and select the top N or aggregate them up, you would better to review if you can choose a better metric name design.
-If you can not know the querys ahead of time, or there is no good way to normalize or denormalize so that metric name centric model can fit, then let's explore other options.
+Traditional RDBMS and Fast K/V database can make great TSDB. If we can know all the query we will make, and with clever design, everything can fit into the metric name centric data model. But if you are wondering how to query a large number of metrics in one time and select the top N or aggregate them up, you would better to review if you can choose a better metric name design.
+If you can not know the querys ahead of time, or there is no good way to normalize or de-normalize so that metric name centric model can fit, then let's explore other options.
