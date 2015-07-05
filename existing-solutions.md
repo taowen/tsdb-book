@@ -65,11 +65,11 @@ PostgresSQL is a very standard RDBMS. A lot of people are using it to store time
 
 ## B-tree index is useless for time series
 
-RDBMS is primary a heap like row store. You can load one row using its row id (primay key) from the row store very fast. However if the query do not use the primary key, the database will scan the whole table to find the rows we want. To avoid full table scan, a b-tree based seconary index is introduced to allow looking up the index to find out what rows are required. The process can be illustrated as:
+RDBMS has a heap like row store. You can load one row using its row id (primay key) from the row store very fast. However if the query do not use the primary key, the database will scan the whole table to find the rows we want. To avoid full table scan, a b-tree based secondary index is introduced to allow looking up the index to find out what rows are required. The process can be illustrated as:
 
 ![](rdbms-index.png)
 
-b-tree index is looked up to find the row id, then the row id is used to load from the row store to get actual data. Using the row id to load data is "random access" of the on disk data. B-tree index is optimized to load small number of rows, so that "random access" penality is negligible compared to the benefit of filtering out the exact rows needed by b-tree index. However, this optimization does not work for time series data. After filtering by b-tree index, there are many  thousands of rows need to be fetched from the row store, then the "random access" cost will be very high. A lot of times, database query planner will decide to fallback to full table scan instead of using the index in this scenario.
+b-tree index is looked up to find the row id, then the row id is used to load from the row store to get actual data. Using the row id to load data is "random access" of the on disk data. B-tree index is optimized to load small number of rows, so that "random access" penalty is negligible compared to the benefit of filtering out the exact rows needed. However, this optimization does not work for time series data. After filtering by b-tree index, there are many thousands of rows to be fetched from the row store, then the "random access" cost will be very high. A lot of times, database query planner will decide to fallback to full table scan instead of using the index in this scenario.
 
 ## Partition as coarse grained timestamp based index
 
