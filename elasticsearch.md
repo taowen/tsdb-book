@@ -38,7 +38,7 @@ Elaticsearch is faster and more scalable than mysql for time series data because
 
 Let's go through them one by one, I am sure you will love Elasticsearch.
 
-# Inverted Index
+# Finite State Transducers (FST)
 
 There is one article that explains inverted index very well: http://blog.parsely.com/post/1691/lucene/
 
@@ -59,9 +59,16 @@ small=[doc3]
 ```
 b-tree index is not that different from end-user perspective, b-tree also invert the rowid=>value to value=>rowid, so that find rows contains certain value can be very fast.
 
+There is a great article on how inverted is stored and queried using Finite State Transducers
+http://www.cnblogs.com/forfuture1978/p/3945755.html
+
+![](fst.png)
+
+For people do not have time to read the article or lucene source code. It works like English dictionary. You look up the section, find the chapter, than find the material you are looking for.
+
 # Bitset
 
-But in mysql, if you have two columns and you have query like "plat='wx' AND os='android'" then using b-tree index to index plat and os is not enough. In the runtime, if you have index for column plat and another index for column os, mysql have to pick one of most selective index to use, leave another index not used at all. There is a great presentation on how index work in mysql: http://www.slideshare.net/vividcortex/optimizing-mysql-queries-with-indexes
+In mysql, if you have two columns and you have query like "plat='wx' AND os='android'" then using b-tree index to index plat and os is not enough. In the runtime, if you have index for column plat and another index for column os, mysql have to pick one of most selective index to use, leave another index not used at all. There is a great presentation on how index work in mysql: http://www.slideshare.net/vividcortex/optimizing-mysql-queries-with-indexes
 
 ![](multi-column-index.jpg)
 
