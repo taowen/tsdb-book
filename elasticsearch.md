@@ -167,5 +167,11 @@ Elsaticsearch is limited by the JVM, so that leveraging SIMD cpu instructions to
 * video: https://berlinbuzzwords.de/session/fast-decompression-lucene-codec
 * post: http://blog.griddynamics.com/2015/02/proposing-simd-codec-for-lucene.html
 
+# Success Stories
+
+There are two company using Elasticsearch as time series database from my knowledge. There must be many more companies using it, but I was not aware of.
+
+* Bloomberg: http://www.slideshare.net/lucidworks/search-analytics-component-presented-by-steven-bower-bloomberg-lp
+* Parse.ly: https://www.elastic.co/blog/pythonic-analytics-with-elasticsearch
 
 
