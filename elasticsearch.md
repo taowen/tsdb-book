@@ -114,8 +114,19 @@ Mysql is a row oriented database, which means the rows are store one after anoth
 
 ![](column-vs-row-oriented-database.png)
 
+# Compression: bit packing
 
+It is worth mentioning, Elasticsearch also compress the stored DocValue. One of the technique is called bit packing. Using bit-packing numeric values can be stored with less disk space. The key observation is despite some int are large, the range of serie of ints are very close to each other. For example:
 
+```101, 102, 105``
+
+If we subtract 100 from the value, it become
+
+```1, 2, 5```
+
+then those values can be stored with less on disk space.
+
+![](bit-packing.jpg)
 
 
 
