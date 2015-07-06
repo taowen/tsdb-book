@@ -51,3 +51,13 @@ The primary missing features in TSDB are:
 * no join: join at query time is considered slow, so TSDB do not allow join in query time. One work around is to join at the input time (like in TRT-Storm phase).
 * no post aggregation:  one common SQL feature not supported by TSDB is HAVING statement. HAVING will do the filtering after aggregation
 
+# Kafka/Storm/Spark
+
+There is no database that support full functionality. In real setting it is common to combine several technologies to form a working solution:
+
+* Kafka is used as the queue to time series database
+* Storm is used as a realtime pipeline to ingest the data, and do the transformation to several form. This provides the input interface and materlized view
+* Database is used to hold the data and support querys. All databases can support raw data querys. Some of the databases can support realtime aggregation
+* Spark can be used on top of database to provide scalable and complex aggregation or even realtime machine learning
+
+The total scope of a TSDB is very big. Here we do not discuss the usage of kafka/storm/spark.
