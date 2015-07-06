@@ -71,6 +71,18 @@ RDBMS has a heap like row store. You can load one row using its row id (primay k
 
 b-tree index is looked up to find the row id, then the row id is used to load from the row store to get actual data. Using the row id to load data is "random access" of the on disk data. B-tree index is optimized to load small number of rows, so that "random access" penalty is negligible compared to the benefit of filtering out the exact rows needed. However, this optimization does not work for time series data. After filtering by b-tree index, there are many thousands of rows to be fetched from the row store, then the "random access" cost will be very high. A lot of times, database query planner will decide to fallback to full table scan instead of using the index in this scenario.
 
+## Convering index is also useless
+
+There is one feature of rdbms index worth mentioning, that is covering index (in mysql terms) or index only scan (in postgresql terms). without covering index, the query will hit the b-tree index, than load the rows from row store in two steps:
+
+![](non-covering-index.png)
+
+If the filter of the query used columns are all "covered" by the index, and the selected columns of the query are all "covered" by the index, then the query can be served from the index only, there is no need to go back to the row store to fetch original rows to compute query. 
+
+![](covering-index.png)
+
+Covering index is useful to optimize one or two frequent query. To make a optimized query about column A,B,C, then index should contain A,B,C column in the same order. If there is index for A,B,C separately, it can not be used by the covering index. We can not rely on covering index to give us good performance on any query.
+
 ## Partition as coarse grained timestamp based index
 
 Another commonly used technique is partitioning. The simplest way is just to create a new table to store data for every day.
