@@ -182,11 +182,28 @@ But nevertheless, Elasticsearch has a distributed computation layer that works.
 
 Elasticsearch has very good story on Map/reduce as well. There are two ways to do that
 
-* Use Elasticsearch distributed computation as a map/reduce engine, you plug script into the calculcation process
+* Use Elasticsearch distributed computation as a map/reduce engine, you plug script into the calculation process
 * Use Elasticsearch as a data store with good filtering support, build the distributed computation layer using Spark
 
- 
+This is how Elasticsearch can be used as RDD in spark:
 
+```
+// Set our query
+jobConf.set("es.query", query)
+// Create an RDD of the tweets
+val currentTweets = sc.hadoopRDD(jobConf,
+ classOf[EsInputFormat[Object, MapWritable]],
+ classOf[Object], classOf[MapWritable])
+// Convert to a format we can work with
+val tweets = currentTweets.map{ case (key, value) =>
+ SharedIndex.mapWritableToInput(value) }
+// Extract the hashtags
+val hashTags = tweets.flatMap{t =>
+ t.getOrElse("hashTags", "").split(" ")
+}
+```
+
+The filter is push down to be executed by Elasticsearch, the aggregation part is done by spark.
 
 # Future: Off-heap 
 
