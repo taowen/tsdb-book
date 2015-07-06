@@ -88,6 +88,16 @@ The actual compression algorithm used in Elasticsearch (lucene is the underlying
 
 The biggest benefit Elasticsearch can give us is to index a lot of columns separately. When doing the query, filters on different columns can be evaluated to bitset and cached efficiently. Then the filter result is AND/OR/NOT of the those individual bitset. There is no composite index in Elasticsearch, unlike mysql.
 
+# DocValues
+
+In mysql, having a bunch of row ids filtered from the b-tree index, then load from the row store are very time consuming "random access" process. Similarly, having a bunch of document ids filtered from the inverted index, how to load other fields of those documents efficiently?
+
+There are 4 ways to load document values that in Elasticsearch, take field "user_age" as example:
+
+* Using _source "stored field", the document is stored as json, need to parse and get the field "user_age"
+* Using user_age "stored field" if it is stored
+* If user_age is indexed in inverted index, Elasticsearch will un-invert the index to form a document_id=>user_age mapping in memory (called "field cache"), then load from the "field cache"
+* If user_age is docvalues, then the field can be loaded from docvalues file
 
 
 
