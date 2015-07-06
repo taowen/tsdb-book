@@ -99,6 +99,8 @@ There are 4 ways to load document values that in Elasticsearch, take field "user
 * If user_age is indexed in inverted index, Elasticsearch will un-invert the index to form a document_id=>user_age mapping in memory (called "field cache"), then load from the "field cache"
 * If user_age is docvalues, then the field can be loaded from docvalues file
 
+DocValues is a real game changer here. It turns Elasticsearch into a valid player in the analytical database market. DocValues is a column-oriented data store, optimized for batch loading.
+
 
 
 
