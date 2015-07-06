@@ -162,6 +162,32 @@ term[1] = "beaver"
 
 # Nested Documents
 
+# Distributed Computation
+
+Most of the goodness is built-in the underlying lucene storage engine. But the distributed computation part is authentic part of Elasticsearch. Having elasticsearch built the distributed part for us, so that we do not need to shard our database, we do not need to send queries to "related" nodes and collect the results back for further aggregation. All of these things have been taken care of.
+
+![](es-sharding.png)
+
+The sharding is not perfect. Master is not using zookeeper, makes it prone to split-brain problem. From crate.io blog we can know the aggregation can be improved or we can use crate.io instead (which builds on top of Elasticsearch): https://crate.io/blog/crate_data_elasticsearch/
+
+```
+Elasticsearch currently supports the HyperLogLog aggregations, whereas Crate.IO supports accurate aggregations. Also Elasticsearch scatters the queries to all nodes, gathering the responses and doing the aggregations afterwards which results in high memory consumption on the node that is handling the client request (and so doing the aggregation).
+
+Crate distributes the collected results to the whole cluster using a simple modulo based hashing, and as a result uses the complete memory of the cluster for merging. Think of it as some kind of distributed map/reduce.
+```
+
+But nevertheless, Elasticsearch has a distributed computation layer that works.
+
+# Map/reduce story
+
+Elasticsearch has very good story on Map/reduce as well. There are two ways to do that
+
+* Use Elasticsearch distributed computation as a map/reduce engine, you plug script into the calculcation process
+* Use Elasticsearch as a data store with good filtering support, build the distributed computation layer using Spark
+
+ 
+
+
 # Future: Off-heap 
 
 Elasticsearch is using a lot of Java Heap to cache. One important future direction to move a lot of cache off the heap. Here is video on this effort forked from Solr (Another lucene based search engine):
