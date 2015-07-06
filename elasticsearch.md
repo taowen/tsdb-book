@@ -153,7 +153,19 @@ term[1] = "beaver"
 
 # Nested Documents
 
+# Future: Off-heap 
 
+Elasticsearch is using a lot of Java Heap to cache. One important future direction to move a lot of cache off the heap. Here is video on this effort forked from Solr (Another lucene based search engine):
+
+* video: https://www.youtube.com/watch?v=dDywZDQJQ3o&index=43&list=PLU6n9Voqu_1FM8nmVwiWWDRtsEjlPqhgP
+* slides: http://www.slideshare.net/lucidworks/native-code-off-heap-data-structures-for-solr-yonik-seeley
+
+# Future: SIMD
+
+Elsaticsearch is limited by the JVM, so that leveraging SIMD cpu instructions to aggregate data faster is hard to implement. There are smart guys working on bring SIMD acceleration into Elasticsearch, and have very promising results:
+
+* video: https://berlinbuzzwords.de/session/fast-decompression-lucene-codec
+* post: http://blog.griddynamics.com/2015/02/proposing-simd-codec-for-lucene.html
 
 
 
