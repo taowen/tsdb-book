@@ -101,7 +101,18 @@ There are 4 ways to load document values that in Elasticsearch, take field "user
 
 DocValues is a real game changer here. It turns Elasticsearch into a valid player in the analytical database market. DocValues is a column-oriented data store, optimized for batch loading.
 
+![](int-columnar-store.jpg)
 
+Above is how a int typed field gets stored on disk. There will be separate file for each DocValues field, within the file, values of documents are stored continuously. Each document occupy a fixed size to store its value of that field. So the memory mapped file looks like a array in memory, seek to the values of certain documents is a very fast operation. Batching loading a continuous documents is also very fast sequential read operation.
+
+There is a very good video on DocValues:
+
+* video: https://www.youtube.com/watch?v=JLUgEpJcG40
+* slides: http://www.slideshare.net/lucenerevolution/willnauer-simon-doc-values-column-stride-fields-in-lucene
+
+Mysql is a row oriented database, which means the rows are store one after another, each row has all fields in it. In row oriented database, there is no good way to load values of just one column out of 100. In column oriented database, it is very easy to just load the needed values. Also the column oriented layout is good for cache of CPU, as the values read is the values to be computed.
+
+![](column-vs-row-oriented-database.png)
 
 
 
