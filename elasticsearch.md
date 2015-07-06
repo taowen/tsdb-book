@@ -160,7 +160,43 @@ term[0] = "aardvark"
 term[1] = "beaver"
 ```
 
-# Nested Documents
+# Block Join
+
+It is also called nested documents or document block.
+
+![](es-document-block.png)
+
+This is how it is indexed
+
+```
+curl -XPOST 'localhost:9200/products/product' -d '{
+    "name" : "Polo shirt",
+    "description" : "Made of 100% cotton",
+    "offers" : [
+        {
+        "color" : "red",
+        "size" : "s",
+        "price" : 999
+        },
+        {
+        "color" : "red",
+        "size" : "m",
+        "price" : 1099
+        },
+        {
+        "color" : "blue",
+        "size" : "s",
+        "price" : 999
+        }
+    ]
+}
+```
+
+What nested document can give us is 3 fold goodness:
+
+* The ability to control the on disk layout of documents. If we index a bunch of documents as nested documents of one parent, they will be stored physically next to each other. data within a time range is accessed together most of time, it makes sense to pack data within a time range together as a series of nested documents. Nested document is working like clustering index in mysql
+* Parent documents count is much less, so the inverted index lookup can be faster for parent document
+* We can pull up some common fields to the parent document so that we do not need to repeat it in nested documents. For example, data for same application can have a app_id in the parent document, and in each data point nested do not need to mention app_id again
 
 # Distributed Computation
 
