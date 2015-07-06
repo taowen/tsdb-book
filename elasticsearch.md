@@ -174,4 +174,6 @@ There are two company using Elasticsearch as time series database from my knowle
 * Bloomberg: http://www.slideshare.net/lucidworks/search-analytics-component-presented-by-steven-bower-bloomberg-lp
 * Parse.ly: https://www.elastic.co/blog/pythonic-analytics-with-elasticsearch
 
+Because there are many more people using Elasticsearch as a analytics database instead of search engine, the company behind Elasticsearch is now called "Elastic" without search.
+
 
