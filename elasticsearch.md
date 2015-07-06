@@ -128,6 +128,30 @@ then those values can be stored with less on disk space.
 
 ![](bit-packing.jpg)
 
+# Compression: dictionary encoding
+
+Store repeated string values in doc values will not store the same value again and again. Recall there is TSUID in opentsdb, the idea is metric name is very repeative and long (many bytes), instead of store the metric name on each data point, we translate the metric name to a numeric value to save disk space. Elasticsearch DocValues will do the translation internally for us, there is no need to do the optimization trick in application layer.
+
+For example, we have 3 documents
+
+```
+doc[0] = "aardvark"
+doc[1] = "beaver"
+doc[2] = "aardvark"
+```
+
+It will be stored as
+
+```
+doc[0] = 0
+doc[1] = 1
+doc[2] = 0
+
+term[0] = "aardvark"
+term[1] = "beaver"
+```
+
+# Nested Documents
 
 
 
