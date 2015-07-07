@@ -198,6 +198,8 @@ What nested document can give us is 3 fold goodness:
 * Parent documents count is much less, so the inverted index lookup can be faster for parent document
 * We can pull up some common fields to the parent document so that we do not need to repeat it in nested documents. For example, data for same application can have a app_id in the parent document, and in each data point nested do not need to mention app_id again
 
+# Index as partition
+
 # Distributed Computation
 
 Most of the goodness is built-in the underlying lucene storage engine. But the distributed computation part is authentic part of Elasticsearch. Having elasticsearch built the distributed part for us, so that we do not need to shard our database, we do not need to send queries to "related" nodes and collect the results back for further aggregation. All of these things have been taken care of.
