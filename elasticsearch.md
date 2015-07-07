@@ -205,7 +205,7 @@ Compare to mysql
 * mysql => database => table => rows
 * elasticsearch => index => mapping => documents
 
-At first glance, you might think index=database, mapping=table. Actually mapping is physically isolated from each other. In reality index is ued like mysql table physically partition the time series data, for example, we have 3 days of logs:
+At first glance, you might think index=database, mapping=table. Actually mapping is NOT physically isolated from each other. In reality index is ued like mysql table to physically partition the time series data, for example, we have 3 days of logs, then we create 3 indices:
 
 * logs-2013-02-22
 * logs-2013-02-21
