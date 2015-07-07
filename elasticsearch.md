@@ -268,7 +268,7 @@ Compared to nosql database like Mongodb, who claims to support map/reduce using 
 
 # Future: Off-heap 
 
-Elasticsearch is using a lot of Java Heap to cache. One important future direction to move a lot of cache off the heap. Here is video on this effort forked from Solr (Another lucene based search engine):
+Elasticsearch is using a lot of Java Heap to cache. One important future direction is to move a lot of cache off the heap. Here is video on this effort forked from Solr (Another lucene based search engine):
 
 * video: https://www.youtube.com/watch?v=dDywZDQJQ3o&index=43&list=PLU6n9Voqu_1FM8nmVwiWWDRtsEjlPqhgP
 * slides: http://www.slideshare.net/lucidworks/native-code-off-heap-data-structures-for-solr-yonik-seeley
