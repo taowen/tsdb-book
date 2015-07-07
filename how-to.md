@@ -226,7 +226,11 @@ In the pre-computed data, we can omit the cc_set, plat, os dimensions, so that q
 
 ```
 {  
+   "login_precomputed_biz_id":{  
       "_source":{  
+         "enabled":false
+      },
+      "_all":{  
          "enabled":false
       },
       "properties":{  
@@ -278,12 +282,10 @@ In the pre-computed data, we can omit the cc_set, plat, os dimensions, so that q
             "doc_values":true,
             "type":"date"
          }
-      },
-      "_all":{  
-         "enabled":false
       }
    }
-   ```
+}
+```
 
 Indexing & Querying
 --------------------
