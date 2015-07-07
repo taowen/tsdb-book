@@ -264,4 +264,11 @@ There are two company using Elasticsearch as time series database from my knowle
 
 Because there are many more people using Elasticsearch as a analytics database instead of search engine, the company behind Elasticsearch is now called "Elastic" without search.
 
+As we can see from above, there are a sorts of optimization has been done for you by lucene and elasticsearch. We can make a list to compare:
+
+* Opentsdb TSUID: opentsdb compress the metric name to TSUID by using a dictionary. This is optimization is FST to store inverted index in lucene. If the long string is not index but DocValues, lucene will also use dictionary encoding to compress it.
+* Opentsdb HBase Scan: opentsdb is using the physical layout of hbase data file to scan sequentially. In lucene this is done by columnar store DocValues file.
+* Opentsdb compaction: opentsdb compact data points of a time range into one column of one row, to reduce the storage size and speed up the scanning. This can be optimized using nested documents of lucene.
+* Postgresql time based partition: 
+
 
