@@ -262,7 +262,9 @@ val hashTags = tweets.flatMap{t =>
 
 The filter is push down to be executed by Elasticsearch, the aggregation part is done by spark.
 
-For using Elasticsearch itself as a map reduce engine, the feature is called "Scripted Metric Aggregation": https://www.elastic.co/guide/en/elasticsearch/reference/1.6/search-aggregations-metrics-scripted-metric-aggregation.html
+For using Elasticsearch itself as a map reduce engine, the feature is called "Scripted Metric Aggregation": https://www.elastic.co/guide/en/elasticsearch/reference/1.6/search-aggregations-metrics-scripted-metric-aggregation.html 
+
+Compared to nosql database like Mongodb, who claims to support map/reduce using javascript. I think plugin java code into Elasticsearch/lucene is a much better interop story than integrate a c++ database engine with a javascript engine. 
 
 # Future: Off-heap 
 
