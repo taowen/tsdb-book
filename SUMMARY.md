@@ -5,4 +5,5 @@
 * [Agility](agility.md)
 * [Existing Solutions](existing-solutions.md)
 * [Elasticsearch](elasticsearch.md)
+* How-to
 
