@@ -295,6 +295,8 @@ As we can see from above, there are a sorts of optimization has been done for yo
 * Opentsdb HBase Scan: opentsdb is using the physical layout of hbase data file to scan sequentially. In lucene this is done by columnar store DocValues file.
 * Opentsdb compaction: opentsdb compact data points of a time range into one column of one row, to reduce the storage size and speed up the scanning. This can be optimized using nested documents of lucene.
 * Postgresql time based partition: postgresql can create table for every day, then combine the tables as one view. Elasticsearch can also do the time based partition, but wehn querying the application level need to be aware of the time range and actively select the indices (like postgresql partition table) to use.
-* rdbms b-tree index: inverted index is fast, and the DocValues is column-oriented unlike row-oriented rdbms which can not utilize the b-tree index when rows to fetch is huge.
-* rdbms covering index: Elasticsearch does not support covering index. 
+* RDBMS b-tree index: inverted index is fast, and the DocValues is column-oriented unlike row-oriented rdbms which can not utilize the b-tree index when rows to fetch is huge.
+* Mysql covering index: Elasticsearch does not support covering index. DocValues can remedy the pain.
+* Mysql clustered index: Using clustered index can store related rows phyiscally together to speed up query. Elasticsearch can use nested documents as clustered index.
+
 
