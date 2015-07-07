@@ -201,4 +201,99 @@ One optimization can be used on the default mapping is to "pull up" some of the 
 }
 ```
 
+Pre-computation
+-------------------------
+
+We create one index for one day data. The indices will looks like:
+
+* logs-2015-07-05
+* logs-2015-07-06
+* logs-2015-07-07
+
+We can pre-compute the data to a separate indices:
+
+* logs-precomputed-2015-07-05
+* logs-precomputed-2015-07-06
+* logs-precomputed-2015-07-07
+
+In above mapping, there are four dimensions:
+
+```
+biz_id, cc_set, plat, os
+```
+
+In the pre-computed data, we can omit the cc_set, plat, os dimensions, so that query the total login for one biz_id can be faster.
+
+```
+{  
+      "_source":{  
+         "enabled":false
+      },
+      "properties":{  
+         "login_precomputed_biz_id_biz_id":{  
+            "index":"not_analyzed",
+            "fielddata":{  
+               "format":"doc_values"
+            },
+            "doc_values":true,
+            "type":"string"
+         },
+         "login_precomputed_biz_id_precomputed_max_of_count":{  
+            "index":"no",
+            "fielddata":{  
+               "format":"doc_values"
+            },
+            "doc_values":true,
+            "type":"integer"
+         },
+         "login_precomputed_biz_id_precomputed_sum_of_count":{  
+            "index":"no",
+            "fielddata":{  
+               "format":"doc_values"
+            },
+            "doc_values":true,
+            "type":"integer"
+         },
+         "login_precomputed_biz_id_precomputed_count":{  
+            "index":"no",
+            "fielddata":{  
+               "format":"doc_values"
+            },
+            "doc_values":true,
+            "type":"integer"
+         },
+         "login_precomputed_biz_id_precomputed_min_of_count":{  
+            "index":"no",
+            "fielddata":{  
+               "format":"doc_values"
+            },
+            "doc_values":true,
+            "type":"integer"
+         },
+         "login_precomputed_biz_id_timestamp":{  
+            "fielddata":{  
+               "format":"doc_values"
+            },
+            "format":"dateOptionalTime",
+            "doc_values":true,
+            "type":"date"
+         }
+      },
+      "_all":{  
+         "enabled":false
+      }
+   }
+   ```
+
+Indexing & Querying
+--------------------
+
+Using this format, indexing and querying will not be straight forward. It is certainly unlike
+
+```
+INSERT INTO login(biz_id, cc_set, plat, os, cunt) VALUES(...)
+```
+
+There should be two service wrap Elasticsearch to provide more usable index/query api.
+
 
