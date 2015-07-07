@@ -200,6 +200,25 @@ What nested document can give us is 3 fold goodness:
 
 # Index as partition
 
+Compare to mysql
+
+* mysql => database => table => rows
+* elasticsearch => index => mapping => documents
+
+At first glance, you might think index=database, mapping=table. Actually mapping is physically isolated from each other. In reality index is ued like mysql table physically partition the time series data, for example, we have 3 days of logs:
+
+* logs-2013-02-22
+* logs-2013-02-21
+* logs-2013-02-20
+
+When we search we can specify the indices included in the scope to speed up the query:
+
+```
+$ curl -XGET localhost:9200/logs-2013-02-22,logs-2013-02-21/Errors/_search?query="q:Error Message"
+```
+
+Notice in Elasticsearch we can partition the data to time based indices, but there is no built-in support to select the indices for us based on the time range filter. Unlike postgreql, we can SELECT * FROM logs WHERE timestamp > xxx  AND timestamp < yyy without knowing there is actually 3 physical tables beneath the logs view.
+
 # Distributed Computation
 
 Most of the goodness is built-in the underlying lucene storage engine. But the distributed computation part is authentic part of Elasticsearch. Having elasticsearch built the distributed part for us, so that we do not need to shard our database, we do not need to send queries to "related" nodes and collect the results back for further aggregation. All of these things have been taken care of.
