@@ -262,6 +262,8 @@ val hashTags = tweets.flatMap{t =>
 
 The filter is push down to be executed by Elasticsearch, the aggregation part is done by spark.
 
+For using Elasticsearch itself as a map reduce engine, the feature is called "Scripted Metric Aggregation": https://www.elastic.co/guide/en/elasticsearch/reference/1.6/search-aggregations-metrics-scripted-metric-aggregation.html
+
 # Future: Off-heap 
 
 Elasticsearch is using a lot of Java Heap to cache. One important future direction to move a lot of cache off the heap. Here is video on this effort forked from Solr (Another lucene based search engine):
@@ -290,6 +292,8 @@ As we can see from above, there are a sorts of optimization has been done for yo
 * Opentsdb TSUID: opentsdb compress the metric name to TSUID by using a dictionary. This is optimization is FST to store inverted index in lucene. If the long string is not index but DocValues, lucene will also use dictionary encoding to compress it.
 * Opentsdb HBase Scan: opentsdb is using the physical layout of hbase data file to scan sequentially. In lucene this is done by columnar store DocValues file.
 * Opentsdb compaction: opentsdb compact data points of a time range into one column of one row, to reduce the storage size and speed up the scanning. This can be optimized using nested documents of lucene.
-* Postgresql time based partition: 
+* Postgresql time based partition: postgresql can create table for every day, then combine the tables as one view. Elasticsearch can also do the time based partition, but wehn querying the application level need to be aware of the time range and actively select the indices (like postgresql partition table) to use.
+* rdbms b-tree index: inverted index is fast, and the DocValues is column-oriented unlike row-oriented rdbms which can not utilize the b-tree index when rows to fetch is huge.
+* rdbms covering index: DocValues is covering index
 
 
