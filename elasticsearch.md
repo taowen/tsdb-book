@@ -94,7 +94,7 @@ To query 50 ~ 100
 ```
 
 https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-core-types.html#number
-there is a setting precision_step to control how many terms generated
+there is a setting precision_step to control how many terms generated. If no range query is required, we can set it to max to save disk space.
 
 # Bitset
 
