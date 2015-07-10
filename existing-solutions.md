@@ -105,6 +105,13 @@ When query a partitioned table, the query planner can know the time range filter
 
 Essentially, table partitioned by the timestamp is using the timestamp as a coarse grained index. It is very useful to maintain a constant speed for time series data query, even the historic data keeps growing.
 
+## Summary of Postgresql 
+
+Using timestamp based partition table is the most common optimization, it is not enough
+
+* When there are many metric, not possible to create table for every metric. Storing metric name as column will bloat up the partion table, finding values for particular metric will scan over other metric
+* Aggregation is done in single node, no built-in distributed computation support
+
 # Mongodb
 
 There are also a lot of people trying to fit their hammers into any kind of holes, mongodb is no exception. Mongodb is architecturally very similar to tranditional RDBMS, but the table per day partitioning optimization does not apply to Mongodb, as mongodb has no native partitioning support, other than you roll your own at the application level.
