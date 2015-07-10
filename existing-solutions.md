@@ -59,6 +59,16 @@ The idea of compact to store 1 minute even 1 hour data per row, instead of 1 sec
 
 The cost of row is too heavy (for example, the dimensions need to stored again and again), it is better to pay the cost once and get as many as possible out of a single row. Note, even the per column cost is too high, opentsdb is not leveraging the multi-column feature, instead everything is packed into the same column.
 
+## Summary of Opentsdb
+
+Opentsdb is missing following features:
+
+* Opentsdb only support one value per data point
+* Opentsdb forces one timestamp can only have one dimension combination (for example proc.loadavg.1m already have one value for 12:05, insert another one will yield error when reading)
+* Opentsdb can not filter out values based on tags(dimensions) quickly
+* Aggregation is done out side of HBase, the network traffic will be a problem when aggregating a lot of data
+* Aggregation is done at a single node, not leveraging map reduce
+
 # PostgreSQL
 
 PostgresSQL is a very standard RDBMS. A lot of people are using it to store time series data.
