@@ -141,6 +141,8 @@ Leveraging these two features of the database engine, one can design the schema 
 ```
 The idea is for every new data point, we update the document for the minute, instead of inserting a new document until the next minute. Same can be applied for one hour or one day. This way, when querying the data for the minute/hour/day, we just need to load one big document which is fast.
 
+The problem of storing like this is: aggregation will be very hard. Mongodb aggregation framework does not allow aggregate data of document properties.
+
 # Mysql
 
 VividCortext is a mysql performance monitoring company lead by mysql performance expert Baron Schwartz. You can bet he knows how to use mysql well. Not surprisingly, everyone just fits their hammers into any holes, VividCortex is using mysql to store time series data for their monitoring business.
