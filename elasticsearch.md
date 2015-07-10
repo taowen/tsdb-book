@@ -93,6 +93,9 @@ To query 50 ~ 100
 50x75 OR 76x99 OR 100
 ```
 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-core-types.html#number
+there is a setting precision_step to control how many terms generated
+
 # Bitset
 
 In mysql, if you have two columns and you have query like "plat='wx' AND os='android'" then using b-tree index to index plat and os is not enough. In the runtime, if you have index for column plat and another index for column os, mysql have to pick one of most selective index to use, leave another index not used at all. There is a great presentation on how index work in mysql: http://www.slideshare.net/vividcortex/optimizing-mysql-queries-with-indexes
