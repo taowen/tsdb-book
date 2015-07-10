@@ -66,6 +66,33 @@ http://www.cnblogs.com/forfuture1978/p/3945755.html
 
 For people do not have time to read the article or lucene source code. It works like English dictionary. You look up the section, find the chapter, than find the material you are looking for.
 
+# Numeric Range Query
+
+Numeric data can also be indexed, looks like:
+
+```
+49=[doc31]
+50=[doc40,doc41]
+51=[doc53]
+...
+```
+
+This is fine for point query. But if querying for a range, it will be slow. Optimization is done to speed up the range query:
+
+```
+49=[doc31]
+50=[doc40,doc41]
+50x75=[doc40,doc41,doc53,doc78,doc99,...]
+51=[doc53]
+...
+```
+
+To query 50 ~ 100
+
+```
+50x75 OR 76x99 OR 100
+```
+
 # Bitset
 
 In mysql, if you have two columns and you have query like "plat='wx' AND os='android'" then using b-tree index to index plat and os is not enough. In the runtime, if you have index for column plat and another index for column os, mysql have to pick one of most selective index to use, leave another index not used at all. There is a great presentation on how index work in mysql: http://www.slideshare.net/vividcortex/optimizing-mysql-queries-with-indexes
