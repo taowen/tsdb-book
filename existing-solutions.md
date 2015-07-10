@@ -112,6 +112,8 @@ Using timestamp based partition table is the most common optimization, it is not
 * When there are many metric, not possible to create table for every metric. Storing metric name as column will bloat up the partion table, finding values for particular metric will scan over other metric
 * Aggregation is done in single node, no built-in distributed computation support
 
+In 9.5, the BRIN index might be used to speed up the metric lookup: https://wiki.postgresql.org/wiki/What's_new_in_PostgreSQL_9.5#BRIN_Indexes
+
 # Mongodb
 
 There are also a lot of people trying to fit their hammers into any kind of holes, mongodb is no exception. Mongodb is architecturally very similar to tranditional RDBMS, but the table per day partitioning optimization does not apply to Mongodb, as mongodb has no native partitioning support, other than you roll your own at the application level.
