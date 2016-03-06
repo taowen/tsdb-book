@@ -36,7 +36,7 @@ This kind of code can be optimized by the JVM hotspot automatically (http://psy-
 If we want to process in column stride fashion, we have to know the schema of data, how many columns and what is the column data type. Current ELK tooling is geared towards schema-less setup, and tend to represent the data as ```Map<String, Object>``` as each row, and ```List<Map<String, Object>>``` as a bunch of rows. This is not the most efficent way of dealing with time series data or OLAP. If we bring back strong schema, and build a new set of tooling leverage the fact we can use ```long[]``` instead of ```Map<String, Object```, it should pump data from data source to Lucene doc-values faster than current setup(without bench-marking to back the theory yet). Elasticsearch is a very good tool to store, and qury from, because in the storage layout it is strong typed and packed the data very compactly for each different data type. But the ingestion process does not have special fast-lane for already structured and typed data. In following sections, I am going to examine the current indexing process and give my 2 cents on how to improve it.
 
 
-## Log file => Local log harvester
+## Log file => Local log harvester => remote log parser
 
 ### Packet Encoding
 
@@ -76,5 +76,58 @@ Current agent to collect data for Elasticsearch is assuming the data is unstruct
 * binary compact packet encoding, without need to split at "\n"
 * allow upstream to specify the destination in the packet header
 * or let upstream to specify the destination in the TCP connection level, so the harvester agent can just forward the stream to remote server
+
+## local log harvester => remote log parser => kafka
+
+### Packet Parsing
+
+Regex parsing is slow. JSON parsing is faster. Binary encoding such as msgpack or avro is much much better. If the packet is already in json or even avro, the log parser is optional then. We can store input bytes directly in kafka.
+
+### Shuffling
+
+The cost of remote log parser is not just parsing some string according some complex regex. It also introduce a lot of copying. Think about:
+
+```
+data source machines1 => log parser machine
+data source machines2 => log parser machine
+...
+data source machines1000 => log parser machine
+```
+
+It is easily to overwhelm the central parsing machine. So we distribute the load
+```
+data source machines1 => log parser machine1
+data source machines2 => log parser machine1
+...
+data source machines1000 => log parser machine10
+```
+But the backend kafka server is also distributed.
+```
+data source[K] => log parser[L] => kafka[M]
+```
+The data will copy from data source cluster to log parser cluster and then to kafka cluster. It is very hard to co-locate the log parser and kafka in the same machine, as the whole point of log parsing could be shuffle different event to different topic in kafka. Then we are looking at double the bandwidth cost compared to kafka only solution.
+
+### Status
+
+It is best practice to have a central logstash cluster setup in the middle to parse the logs. It has huge cost in terms of parsing and bandwidth. If we have structured and typed data already, we can skip this process altogether, just store the raw bytes in the right kafka topic, from the beginning the data stream. The reason we do not normally write kafka directly, but rather use a log based parsing solution is:
+
+* we do not want to slow down the application server
+* file is reliable, in case of network partition, we can hold up
+
+This can be solved by a better local agent discussed above. It can be
+
+* async
+* use batching internally
+* memory mapped file based queueing
+
+In case of failure, the memory mapped file can provide the safety we need. Essentially, we implement some kind of write-ahead logging using local file system, and store the data async to remote kafka cluster.
+
+## Log file => Kafka
+
+Kafka is just another form of log file. We use a local agent implement write ahead logging to support reliable transfer stream of events from local machine to central kafka. It should be reliable and fast this way.
+But why we need to copy log file from one form to another? Well, kafka is in the central server and have well defined topics to consume from. The benefit of having a publicly accessible event stream out-weight the cost of log shipping.
+
+
+
 
 
