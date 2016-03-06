@@ -38,5 +38,43 @@ If we want to process in column stride fashion, we have to know the schema of da
 
 ## Log file => Local log harvester
 
+### Packet Encoding
+
+We collect logs from where data is generated. At those places, CPU cycles are much precious, and should be saved to better serve our customer. So it is general best practices to do minimum parsing and just ship the data to remote side for further processing. Some parsing is necessary as we have to send the data in small chunks and shuffle them to different remote servers. If the chunk was not splitted in the right boundary, then the remote server can not handle the data properly. The most commonly used boundary is "\n" to separate log lines. 
+
+Not all log files are not structured. Some log file such as the binlog of mysql server, it is very compact and structured. "\n" is just a less-sophisticated form of packet encoding to convey the meaning of "event". There are much formal ways to encode a "event" into a packet. If the data source can generate stream of events in easy to parse packet form, the performance can be improved. For example:
+
+```
+[packe_size][... remaining bytes ...][packet_size][... remaining bytes ...]
+```
+It is very common to have a header containing the size of packet. So that it is easy to chop out the bytes from the stream without needing to understand the whole structure. "\n" is not the best solution here.
+
+### Inter-process Communication
+
+```
+Data source =IPC=> Harvester =RPC=> Remote 
+```
+Log file is a means of IPC between data source process and harvester process. Use file to pass events from one process to another might not be very efficient, but modern Linux system optimized the pattern efficient enough.
+We can implement the IPC side a unix domain socket. Then the harvester can be a TCP proxy to relay events from data source to remote. If one data source correspond to only one remote, then the process can be as fast as direct copy. 
+
+### Shuffling
+
+It is common requirement to shuffle the data in the process. For example, in the log file
+```
+LOGIN,xxxx
+LOGOUT,xxx
+LOGIN,xxx
+LOGIN,xxx
+```
+The data of login and logout might need to be send to different kafka topic. So the harvester or the remote parser will need to shuffle the data from same source to different destination. It is better to generate several log files from the upstream. The cost of picking and shuffling is just for programming convenience. After all, the events are normally generated from different site of the code, why not just output to different log files?
+
+### Status
+
+Current agent to collect data for Elasticsearch is assuming the data is unstructured log, and trying to put as many features in it. The result is slow agent with too many CPU used when the volume is high. We need a new agent for structured and typed data to handle vast amount of data for time series and IOT. The agent can be
+
+* a unix domain socket server listen at 127.0.0.1
+* binary compact packet encoding, without need to split at "\n"
+* allow upstream to specify the destination in the packet header
+* or let upstream to specify the destination in the TCP connection level, so the harvester agent can just forward the stream to remote server
 
 
