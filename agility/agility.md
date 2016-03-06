@@ -3,6 +3,7 @@ What is agility? To understand that, we need to know how traditional TSDB works.
 
 ![](traditional-tsdb.png)
 
+
 What you report is what gets stored. What you stored, is what you can query. The schema is exactly same from the raw data to the chart on monitor. Also, the shema is limited to two dimension, key being the timestamp, value being a numeric. What if you need to change the chart to view? Well, you have to go back to the source, modify and wait for new data. What if you need to aggregate up the curves? It is either too slow or impossible to so. Normally you will end up with do the aggregation yourself (using tools such as Statsd), then put the aggregated data into the TSDB.
 
 This is a what a agile TSDB looks like:
