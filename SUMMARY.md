@@ -6,4 +6,4 @@
 * [Existing Solutions](existing-solutions/existing-solutions.md)
 * [Elasticsearch](elasticsearch/elasticsearch.md)
 * [How-to](how-to/how-to.md)
-
+* [Indexing](Indexing/Indexing.md)
