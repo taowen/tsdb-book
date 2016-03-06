@@ -107,6 +107,10 @@ data source[K] => log parser[L] => kafka[M]
 ```
 The data will copy from data source cluster to log parser cluster and then to kafka cluster. It is very hard to co-locate the log parser and kafka in the same machine, as the whole point of log parsing could be shuffle different event to different topic in kafka. Then we are looking at double the bandwidth cost compared to kafka only solution.
 
+### Small Packet
+
+If the event is tiny, store it as a document in kafka will be costly. It is common to batch a bunch of events into a larger packet and store as one in kafka. In this batching process, we can reogranized the data from row oriented to column oridented.
+
 ### Status
 
 It is best practice to have a central logstash cluster setup in the middle to parse the logs. It has huge cost in terms of parsing and bandwidth. If we have structured and typed data already, we can skip this process altogether, just store the raw bytes in the right kafka topic, from the beginning the data stream. The reason we do not normally write kafka directly, but rather use a log based parsing solution is:
@@ -125,7 +129,10 @@ In case of failure, the memory mapped file can provide the safety we need. Essen
 ## Log file => Kafka
 
 Kafka is just another form of log file. We use a local agent implement write ahead logging to support reliable transfer stream of events from local machine to central kafka. It should be reliable and fast this way.
+
 But why we need to copy log file from one form to another? Well, kafka is in the central server and have well defined topics to consume from. The benefit of having a publicly accessible event stream out-weight the cost of log shipping.
+
+We just need a better agent for structured data.
 
 ## kafka => log indexer => elasticsearch nodes
 
@@ -143,7 +150,30 @@ kafka => log indexer => elasticsearching indexing node => elasticsearch shard WA
 
 Between final lucene file and kafka, there are too many stages. If the data is structured and typed, then what is the difference between kafka and WAL of elasticsearch shard?
 
-### 
+### Status
 
+There is no way to avoid copy data when using both kafka and Elasticsearch currently. It is not possible to co-locate kafka partition and elasticsearch shard in same node. In theory we can use kafka partition on the same machine as the WAL of the elasticsearch shard.
+
+
+## elasticsearch node => lucene index writer => lucene doc-values
+
+The lucene index writer is also row oriented. The same document is parsed and represented by different objects from elasticsearch to lucene. Indexing large volume of data will create lot os GC pressure. 
+Also the doc-values is process as ```long[]``` in the codec, but the interface to the codec is ```List<Number>```, which will have a lot of boxing cost.
+
+## Summary
+
+```
+Log => Kafka => Lucene Doc-values
+```
+
+kafka, elasticsearch, lucene all three things produced by different parties. Which leaves us a great cost to translate data from one to another. In theory, it should be possible to have a bunch of ```long[]``` land in kafka in binary compact form, and store them directly in elasticsearch index as lucene doc-values. We need:
+
+* agent to provide reliable async facade to kafka
+* agent to batch up events in block, re-organize the data from row to column
+* modify kafka to serve as elasticsearch WAL
+* modify elasticsearch to use kafka as WAL
+* modify lucene to provide fast lane for java primitive values and index document in column-oriented fashsion
+
+If we truly believe Elasticsearch can be a great time-series database, we would need better support for  the "INSERT" statement.
 
 
