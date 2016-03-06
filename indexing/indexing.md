@@ -127,7 +127,23 @@ In case of failure, the memory mapped file can provide the safety we need. Essen
 Kafka is just another form of log file. We use a local agent implement write ahead logging to support reliable transfer stream of events from local machine to central kafka. It should be reliable and fast this way.
 But why we need to copy log file from one form to another? Well, kafka is in the central server and have well defined topics to consume from. The benefit of having a publicly accessible event stream out-weight the cost of log shipping.
 
+## kafka => log indexer => elasticsearch nodes
 
+### JSON
+
+Elasticsearch only speaks JSON. Any format must be converted to JSON to index. If we want to be fast, we need to modify elasticsearch to let it speak another language.
+
+### Data shuffling
+
+If the log indexer is a node client, then the data is just copied from kafka to indexer, then from indexer to es nodes. If the log indexer is not a node client, then the data will be copied three times.
+
+```
+kafka => log indexer => elasticsearching indexing node => elasticsearch shard WAL => lucene
+```
+
+Between final lucene file and kafka, there are too many stages. If the data is structured and typed, then what is the difference between kafka and WAL of elasticsearch shard?
+
+### 
 
 
 
